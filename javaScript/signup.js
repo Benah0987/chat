@@ -1,20 +1,28 @@
 const form = document.querySelector(".signup form");
 
 form.onsubmit = (e) => {
-  e.preventDefault(); // Prevent form submission to reload the page
+  e.preventDefault(); // Prevent form submission to avoid page reload
 
-  // Create an XMLHttpRequest
+  console.log("Form submitted!");
+
   let xhr = new XMLHttpRequest();
-  xhr.open("POST", "php/signup.php", true);
+  xhr.open("POST", "php/signup.php", true); // Matches your form action
   xhr.onload = () => {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       if (xhr.status === 200) {
-        let data = xhr.response; // Response from the server
-        console.log(data); // Display response in console
+        console.log("Response from server:", xhr.response);
+      } else {
+        console.error("Request failed with status:", xhr.status);
       }
     }
   };
 
-  let formData = new FormData(form); // Get form data
-  xhr.send(formData); // Send form data to the server
+  xhr.onerror = () => {
+    console.error("There was an error with the request");
+  };
+
+  let formData = new FormData(form);
+  console.log("Form data being sent:", formData);
+
+  xhr.send(formData);
 };
