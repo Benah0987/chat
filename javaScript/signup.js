@@ -1,28 +1,25 @@
-const form = document.querySelector(".signup form");
+document.querySelector("#signupForm").addEventListener("submit", function (event) {
+  event.preventDefault(); // Prevent default form submission
 
-form.onsubmit = (e) => {
-  e.preventDefault(); // Prevent form submission to avoid page reload
+  let formData = new FormData(this); // Get form data
 
-  console.log("Form submitted!");
+  fetch("php/signup.php", {
+      method: "POST",
+      body: formData
+  })
+  .then(response => response.text()) // Read response
+  .then(data => {
+      console.log("🚀 Server Response:", data.trim()); // Debugging
 
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "php/signup.php", true); // Matches your form action
-  xhr.onload = () => {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        console.log("Response from server:", xhr.response);
+      if (data.trim() === "success") { // Ensure exact match
+          console.log("✅ Redirecting to login.php...");
+          setTimeout(() => {
+              window.location.href = "login.php"; // Redirect to login page
+          }, 500); // Short delay for smoother transition
       } else {
-        console.error("Request failed with status:", xhr.status);
+          console.error("❌ Error:", data);
+          alert("Error: " + data); // Show error message
       }
-    }
-  };
-
-  xhr.onerror = () => {
-    console.error("There was an error with the request");
-  };
-
-  let formData = new FormData(form);
-  console.log("Form data being sent:", formData);
-
-  xhr.send(formData);
-};
+  })
+  .catch(error => console.error("⚠️ Fetch Error:", error));
+});
